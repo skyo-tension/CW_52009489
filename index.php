@@ -1,3 +1,6 @@
+<link rel="stylesheet" type="text/css" href="https://himatch.jp/css/common-pc-sub.css" />
+<link rel="stylesheet" type="text/css" href="https://himatch.jp/css/common-sp-sub.css" />
+<link rel="stylesheet" type="text/css" href="https://himatch.jp/css/common-sub.css" />
 <script src="https://js.stripe.com/v3/"></script>
 <div class="talk_area">
     <?php if (!empty($talkroom_data['message'])): ?>
