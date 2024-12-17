@@ -1,6 +1,3 @@
-<link rel="stylesheet" type="text/css" href="https://himatch.jp/css/common-pc-sub.css" />
-<link rel="stylesheet" type="text/css" href="https://himatch.jp/css/common-sp-sub.css" />
-<link rel="stylesheet" type="text/css" href="https://himatch.jp/css/common-sub.css" />
 <script src="https://js.stripe.com/v3/"></script>
 <div class="talk_area">
     <?php if (!empty($talkroom_data['message'])): ?>
@@ -448,8 +445,20 @@
             }
         };
 
-        const cardElement = elements.create('card', {
-            style: style
+        // カード番号
+        const cardNumber = elements.create('cardNumber', {
+            style: style,
+            placeholder: 'カード番号(16桁)' // カスタムプレースホルダー
+        });
+        // 有効期限
+        const cardExpiry = elements.create('cardExpiry', {
+            style: style,
+            placeholder: '有効期限(MM/YY)' // カスタムプレースホルダー
+        });
+        // セキュリティコード
+        const cardCvc = elements.create('cardCvc', {
+            style: style,
+            placeholder: 'セキュリティコード(3桁)' // カスタムプレースホルダー
         });
 
         //確認画面へをクリック
@@ -459,7 +468,7 @@
                 error
             } = await stripe.createPaymentMethod({
                 type: 'card',
-                card: cardElement,
+                card: cardNumber,
             });
             if (error) {
                 alert("カード情報が正しくありません。");
@@ -661,9 +670,53 @@
                 var selected_payment_method = selected_payment_method.value;
                 if (selected_payment_method == 'credit') {
                     // document.getElementById('payment_method_area').innerHTML = '<div class="credit_text">クレジットカード決済</div><div class="reserve_form_area2"><input type="text" class="reserve_form3" name="name" placeholder="カード番号(16桁)"></div><div class="reserve_form_area3"><input type="text" class="reserve_form3" name="name" placeholder="有効期限(MM/YY)"></div><div class="reserve_form_area4"><input type="text" class="reserve_form4" name="name" placeholder="セキュリティコード(3桁)"></div>';   
-                    document.getElementById('payment_method_area').innerHTML = '<div class="credit_text">クレジットカード決済</div><form id="payment-form" style="width: 100%;"><div id="card-element"></div></form>';
-                    //NEW 
-                    cardElement.mount('#card-element');
+                    credit_text_html = `
+                    <style>
+                        .reserve_item_payment_method {
+                            display: table-cell;
+                            width: 150px;
+                            color: #ff8b00;
+                            vertical-align: top;
+                            padding-top: 5px;
+                        }
+                        #card-number, #card-expiry, #card-cvc {
+                            position: relative;
+                            left: 10px;
+                            padding-left: 1px;
+                            border-bottom: 1px solid #ccc;
+                            margin-left: 20px;
+                            width: 200px;
+                            height: 25px;
+                        }
+                        #card-number::before, #card-expiry::before, #card-cvc:before {
+                            content: '';
+                            display: inline-block;
+                            width: 10px;
+                            height: 10px;
+                            background-color: #ff8b00;
+                            border-radius: 50%;
+                            position: absolute;
+                            left: -15px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
+                    </style>
+                    <div class="credit_text">クレジットカード決済</div>
+                    <form id="payment-form">
+                        <!-- カード番号 -->
+                        <div id="card-number"></div>
+                        <!-- 有効期限 -->
+                        <div id="card-expiry"></div>
+                        <!-- セキュリティコード -->
+                        <div id="card-cvc"></div>
+                        <!-- エラーメッセージ -->
+                        <div id="card-errors" role="alert"></div>
+                    </form>`;
+                    document.getElementById('payment_method_area').innerHTML = credit_text_html;
+                    // カード番号、有効期限、セキュリティコードをマウント
+                    cardNumber.mount('#card-number');
+                    cardExpiry.mount('#card-expiry');
+                    cardCvc.mount('#card-cvc');
 
                     const form = document.getElementById('payment-form');
 
